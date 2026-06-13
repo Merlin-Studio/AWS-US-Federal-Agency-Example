@@ -14,16 +14,16 @@ Compliance: **FEDRAMP_MODERATE, FEDRAMP_HIGH, NIST_800_53**
 
 ---
 
-## What's in this zip
+## What's in this repository
 
-This tree lists only the files generated for **your** configuration — optional
-files (e.g. `transit_gateway.tf`, `aft.auto.tfvars`) appear here only when the
-matching feature is enabled, so nothing below is "missing".
+This is an **LZA-only** Landing Zone — AWS Control Tower + Landing Zone
+Accelerator (LZA) YAML configuration. The tree below lists every file generated
+for this configuration.
 
 ```
 .
 ├── README.md                  (this file)
-├── DEPLOYMENT_GUIDE.md        Step-by-step deploy for every format
+├── DEPLOYMENT_GUIDE.md        Step-by-step deploy runbook for the LZA pipeline
 ├── architecture.mmd           Mermaid diagram of the landing zone topology
 ├── PLACEHOLDERS.md            (only present if PLACEHOLDER_* tokens were emitted)
 ├── aws-lza/                   Format 1: AWS Control Tower + Landing Zone Accelerator (YAML)
@@ -52,9 +52,6 @@ matching feature is enabled, so nothing below is "missing".
 | **Profile** | advanced (enterprise) |
 | **Compliance** | fedramp_moderate, fedramp_high, nist_800_53 |
 | **LZA version** | 1.14.x |
-| **OpenTofu** | 1.12.0 |
-| **hashicorp/aws** | ~> 5.80 |
-| **aws-cdk-lib** | ^2.150.0 |
 
 ---
 
@@ -87,13 +84,11 @@ matching feature is enabled, so nothing below is "missing".
 
 1. **Search and replace `PLACEHOLDER_` tokens.** The wizard could not infer real
    AWS account IDs, OU IDs, or some ARNs. See `PLACEHOLDERS.md` if present.
-2. **Pre-create your AWS Organization** with a Management account. LZA / CDK /
-   OpenTofu cannot bootstrap the org itself.
-3. **Enable AWS Organizations trusted service access.** `organizations.tf`
-   carries the required principals on a `count = 0` resource — a documentation
-   anchor only, so Terraform does **not** enable them (it must not manage your
-   existing org). From the management account, enable trusted access for each
-   principal — or confirm AWS Control Tower already has — *before* deploying:
+2. **Pre-create your AWS Organization** with a Management account. LZA cannot
+   bootstrap the org itself.
+3. **Enable AWS Organizations trusted service access.** From the management
+   account, enable trusted access for each principal — or confirm AWS Control
+   Tower already has — *before* deploying:
    ```bash
    aws organizations enable-aws-service-access --service-principal cloudtrail.amazonaws.com
    aws organizations enable-aws-service-access --service-principal config.amazonaws.com
@@ -113,11 +108,10 @@ matching feature is enabled, so nothing below is "missing".
    Security Hub org auto-enable, RAM sharing (Transit Gateway), IAM Identity
    Center, and Firewall Manager — they fail to deploy or silently no-op.
 4. **Enable AWS IAM Identity Center** in the management account if you want SSO
-   permission sets to provision. Set the instance ARN via CDK context or the
-   relevant tfvars field.
-5. **Bootstrap state storage** for OpenTofu (S3 + DynamoDB lock) — see
+   permission sets to provision. Set the instance ARN in `iam-config.yaml`.
+5. **Stand up the LZA pipeline** (AWS Control Tower + the Landing Zone
+   Accelerator installer) and point it at the `aws-lza/` config — see
    `DEPLOYMENT_GUIDE.md`.
-6. **Bootstrap CDK** (`cdk bootstrap`) in the home region of each target account.
 
 ---
 
@@ -198,13 +192,14 @@ trace* — what was added, why, and what triggered it.
 | `08_logging_monitoring` | `multi_region_enables_log_replication` | `multi_region_required=true` | Multi-region DR needs the central log bucket replicated to the secondary region so a regional outage does not destroy the audit trail of last resort. |
 | `10_backup_dr` | `multi_region_secondary_region` | `multi_region_required=true` | Multi-region answers (warm/active-active DR) require AWS Backup to copy recovery points to the secondary region. Pre-fill from discovery.secondary_region so the user does not have to retype it. |
 | `10_backup_dr` | `warm_or_active_standby_strengthens_backup` | `dr_requirements = 'warm_standby' OR dr_requirements = 'active_active'` | Warm-standby / active-active DR strategies imply org-level backup policy + vault lock so the secondary region can never lag. |
-| `13_data_platform` | `data_services_athena_enables_athena_glue` | `data_services contains 'athena'` | If the user said they need Athena in the discovery, the Data Platform section should arrive with Athena + Glue both on (Athena requires Glue Catalog). |
-| `14_observability` | `medium_availability_target_basic_observability` | `availability_target in ['99.9', '99.95'] AND availability_requirements != 'very_high'` | 99.9% / 99.95% targets need Synthetics + X-Ray but not the full Prometheus/Grafana stack. Mutually exclusive with the very_high rule: when the categorical tier is 'very_high' (a stronger signal than the raw target percentage), the high rule wins and this one stays quiet so the 'What fired' trace never shows both tiers firing on the same spec. |
-| `17_ec2_compute` | `multi_region_ebs_snapshot_cross_region` | `multi_region_required=true` | Multi-region answers require EBS snapshots to be copied to the secondary region for warm-standby. |
 
+> This trace is scoped to the overlays whose resources are emitted in this
+> LZA bundle. Overlays that targeted application-layer sections (data platform,
+> observability, EC2 fleet) also fired in the wizard but are not part of an
+> LZA foundation config.
 
 ---
 
 ## Next
 
-See **DEPLOYMENT_GUIDE.md** for the deploy-and-verify runbook tailored to each output format.
+See **DEPLOYMENT_GUIDE.md** for the deploy-and-verify runbook for the LZA pipeline.

@@ -1,0 +1,19 @@
+# This is an LZA-only Landing Zone example (AWS Control Tower + Landing Zone
+# Accelerator YAML). It ships no Terraform/OpenTofu/CDK, so this ignore list
+# focuses on secrets and local/editor noise rather than IaC state.
+
+# Secrets / real values — never commit. Replace PLACEHOLDER_ tokens with real
+# account IDs / ARNs in your own private fork, not here. See PLACEHOLDERS.md.
+*.env
+.env
+secrets.*
+*.local.yaml
+*.local.yml
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
