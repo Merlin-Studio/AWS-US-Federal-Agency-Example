@@ -1,0 +1,51 @@
+{
+  "Statement": [
+    {
+      "Action": "ec2:RunInstances",
+      "Condition": {
+        "ForAnyValue:StringLike": {
+          "ec2:InstanceType": [
+            "*.4xlarge",
+            "*.8xlarge",
+            "*.12xlarge",
+            "*.16xlarge",
+            "*.24xlarge",
+            "*.32xlarge",
+            "*.48xlarge",
+            "*.metal",
+            "p3.*",
+            "p4.*",
+            "p5.*",
+            "g4.*",
+            "g5.*",
+            "g6.*",
+            "x1.*",
+            "x2.*",
+            "z1d.*",
+            "u-*"
+          ]
+        }
+      },
+      "Effect": "Deny",
+      "Resource": "arn:aws:ec2:*:*:instance/*",
+      "Sid": "DenyLargeAndAcceleratedInstanceTypes"
+    },
+    {
+      "Action": [
+        "ec2:PurchaseReservedInstancesOffering",
+        "ec2:PurchaseHostReservation",
+        "ec2:PurchaseCapacityBlock",
+        "savingsplans:CreateSavingsPlan",
+        "rds:PurchaseReservedDBInstancesOffering",
+        "elasticache:PurchaseReservedCacheNodesOffering",
+        "redshift:PurchaseReservedNodeOffering",
+        "opensearch:PurchaseReservedInstanceOffering",
+        "es:PurchaseReservedElasticsearchInstanceOffering"
+      ],
+      "Effect": "Deny",
+      "Resource": "*",
+      "Sid": "DenyLongTermCapacityPurchases"
+    }
+  ],
+  "Version": "2012-10-17"
+}

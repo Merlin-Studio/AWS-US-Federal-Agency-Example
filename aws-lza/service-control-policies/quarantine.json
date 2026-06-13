@@ -1,0 +1,19 @@
+{
+  "Statement": [
+    {
+      "Action": "*",
+      "Condition": {
+        "ArnNotLikeIfExists": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::*:role/OrganizationAccountAccessRole",
+            "arn:aws:iam::*:role/AWSControlTowerExecution"
+          ]
+        }
+      },
+      "Effect": "Deny",
+      "Resource": "*",
+      "Sid": "DenyAllNewAccounts"
+    }
+  ],
+  "Version": "2012-10-17"
+}

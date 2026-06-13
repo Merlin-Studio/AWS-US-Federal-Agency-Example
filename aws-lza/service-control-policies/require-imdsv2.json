@@ -1,0 +1,27 @@
+{
+  "Statement": [
+    {
+      "Action": "ec2:RunInstances",
+      "Condition": {
+        "StringNotEquals": {
+          "ec2:MetadataHttpTokens": "required"
+        }
+      },
+      "Effect": "Deny",
+      "Resource": "arn:aws:ec2:*:*:instance/*",
+      "Sid": "DenyRunInstancesWithoutImdsv2"
+    },
+    {
+      "Action": "ec2:ModifyInstanceMetadataOptions",
+      "Condition": {
+        "StringNotEquals": {
+          "ec2:MetadataHttpTokens": "required"
+        }
+      },
+      "Effect": "Deny",
+      "Resource": "*",
+      "Sid": "DenyDowngradingMetadataOptions"
+    }
+  ],
+  "Version": "2012-10-17"
+}
