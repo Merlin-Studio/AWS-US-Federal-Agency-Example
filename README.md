@@ -15,6 +15,8 @@ Generated:    2026-06-13T13:27:14.177742Z
 > infrastructure-as-code bundle (LZA, OpenTofu, CDK or tfvars) in minutes.
 > **[Open Merlin →](https://app.merlin-studio.cloud)**
 
+✉️ **Questions about this example, or need one shaped for your organization?** Write to [intentarcha@gmail.com](mailto:intentarcha@gmail.com?subject=AWS-US-Federal-Agency-Example) — questions, corrections and requests are all welcome.
+
 Profile: **ADVANCED**
 Compliance: **FEDRAMP_MODERATE, FEDRAMP_HIGH, NIST_800_53**
 
@@ -211,5 +213,7 @@ trace* — what was added, why, and what triggered it.
 See **DEPLOYMENT_GUIDE.md** for the deploy-and-verify runbook for the LZA pipeline.
 
 ---
+
+✉️ Questions or feedback: [intentarcha@gmail.com](mailto:intentarcha@gmail.com?subject=AWS-US-Federal-Agency-Example)
 
 ⭐ If this saved you time, a star helps others find it.
