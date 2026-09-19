@@ -50,7 +50,7 @@ for this configuration.
 | | |
 |---|---|
 | **Organization name** | Acme Agency |
-| **Primary contact** | my1mail@acme.gov |
+| **Primary contact** | intentarcha@gmail.com |
 | **Security contact** | my2mail@acme.gov |
 | **Billing contact** | my3mail@acme.gov |
 | **Home region** | us-west-1 |
